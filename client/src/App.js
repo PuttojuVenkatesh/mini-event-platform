@@ -9,7 +9,8 @@ import {
   Typography, Button, TextField, Grid
 } from "@mui/material";
 
-const API = "http://localhost:5000/api";
+const API = "https://mini-event-platform-backend.onrender.com/api";
+
 
 function App() {
   const [events, setEvents] = useState([]);
