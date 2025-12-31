@@ -9,8 +9,7 @@ A full-stack event management platform built using the MERN stack that allows us
 Frontend (Vercel):  
 https://mini-event-platform-sand.vercel.app
 
-Backend (Render):  
-https://mini-event-platform-backend.onrender.com
+Note: The backend is an API-only service consumed by the frontend and is not intended for direct browser access.
 
 ---
 
