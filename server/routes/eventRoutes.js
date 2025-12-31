@@ -52,24 +52,45 @@ router.delete("/:id", auth, async (req, res) => {
 });
 
 /* RSVP JOIN (CAPACITY + CONCURRENCY SAFE) */
+/* RSVP JOIN (FIXED + SAFE) */
 router.post("/:id/rsvp", auth, async (req, res) => {
   try {
-    const event = await Event.findOneAndUpdate(
-      { _id: req.params.id, attendeesCount: { $lt: "$capacity" } },
-      { $inc: { attendeesCount: 1 } },
-      { new: true }
-    );
-
+    const event = await Event.findById(req.params.id);
     if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // 1️⃣ Check capacity
+    if (event.attendeesCount >= event.capacity) {
       return res.status(400).json({ message: "Event full" });
     }
 
-    await RSVP.create({ userId: req.userId, eventId: event._id });
+    // 2️⃣ Check duplicate RSVP
+    const already = await RSVP.findOne({
+      userId: req.userId,
+      eventId: event._id
+    });
+
+    if (already) {
+      return res.status(400).json({ message: "Already RSVPed" });
+    }
+
+    // 3️⃣ Save RSVP
+    await RSVP.create({
+      userId: req.userId,
+      eventId: event._id
+    });
+
+    // 4️⃣ Increment count
+    event.attendeesCount += 1;
+    await event.save();
+
     res.json({ message: "RSVP successful" });
-  } catch {
-    res.status(400).json({ message: "Already RSVPed" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
+
 
 /* RSVP LEAVE */
 router.post("/:id/leave", auth, async (req, res) => {
