@@ -9,7 +9,8 @@ import {
   Typography, Button, TextField, Grid
 } from "@mui/material";
 
-const API = "https://mini-event-platform-backend.onrender.com/api";
+const API = "https://mini-event-platform-backend-new.onrender.com/api";
+
 
 
 function App() {
